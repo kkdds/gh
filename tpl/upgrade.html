@@ -27,16 +27,19 @@ function load()
 <body>
 <div>
     <div class="set_div" style="margin: 10px 0;">赶海系统更新</div>
+    <div class="set_div" style="margin: 10px 0;">编号: {{sn}}</div>
 </div>
 <iframe style="display:none" name="hidden_frame" id="hidden_frame" onload="load()"></iframe>
 <div style="width:100%;height:30%">
     <div class="set_div">
     <form id="formc" action="sys_update" method="post" accept-charset="utf-8"
         enctype="multipart/form-data" target="hidden_frame">
-      核心文件(选择gh文件夹下 core.zip 文件)： <br/> 
-      <!--<label class="abtn bbtn " for="cfile">上传文件</label>-->
+      选择gh文件夹下 core.zip 文件 
+      <br/><br/> 
       <input name="cfile" id="cfile" type="file" value=""/>
+      <br/><br/>
       <input name="tp" type="hidden" value="core" />
+      <br/><br/>
       <input class="abtn " type="submit" id="c_ubtn" value="上传并更新" onClick="toup(this)" />
     </form>
     </div>
@@ -56,7 +59,7 @@ function load()
     font-size: 32px;
     font-weight: normal;
     margin: 0 3px;
-    padding: 8px 12px;
+    padding: 18px 22px;
     text-align: center;
     text-decoration: none;
     background-color: rgba(0, 0, 0, 0.25);

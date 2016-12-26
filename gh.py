@@ -58,6 +58,12 @@ except:
     stapwd = 'abc'
     kconfig.set("gh","stapwd",stapwd)
 
+try:
+    sn = kconfig.get("gh","sn")
+except:
+    sn = 'gh001'
+    kconfig.set("gh","sn",sn)
+
 
 kconfig.write(open(softPath+"setting.ini","w"))
 
@@ -66,8 +72,11 @@ seled_cai_cn=[]
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-io_zq=8 #蒸汽
+io_dy=23 #锅炉电源
+io_zq=24 #蒸汽
+GPIO.setup(io_dy, GPIO.OUT)
 GPIO.setup(io_zq, GPIO.OUT)
+GPIO.output(io_dy, 1)
 GPIO.output(io_zq, 1)
 
 io_in1=2
@@ -83,7 +92,7 @@ p = GPIO.PWM(moto_1_p, 1500)
 p.start(0)
 
 
-huixiqi=-1
+guolupower=0
 watchdog=0
 eTimer1=False
 eIntval1=5
@@ -106,7 +115,7 @@ running_sta
 1 running
 '''
 
-'''
+
 from os import system
 system('sudo ifdown wlan0')
 import pexpect
@@ -114,21 +123,22 @@ import re
 from threading import Thread
 from time import sleep
 
+
 class WAM_AP(object):
     def _get_end(self):
         while True:
             sleep(5)
     def __init__(self):
-        self._process = pexpect.spawn('sudo create_ap --no-virt -n -g 192.168.11.22 wlan0 gh001 66341703')
+        self._process = pexpect.spawn('sudo create_ap --no-virt -n -g 192.168.2.105 wlan0 '+sn+' 66341703')
         self._end_thread = Thread(target=self._get_end)
         self._end_thread.start()
 WAM_AP()
-'''
+
 
 @asyncio.coroutine
 def return_sta(request):
     global eTimer1,eIntval1,sta_onoff,watchdog
-    global shell_up_down,sta_shell,huixiqi
+    global shell_up_down,sta_shell,guolupower
     global stapwd,setpwd,softPath,tempeture_1,tempeture_2,ttim,t
 
     hhdd=[('Access-Control-Allow-Origin','*')]
@@ -145,6 +155,7 @@ def return_sta(request):
         elif po['m'] == 'sta':
             watchdog=0
             tbody= '{"shell_sta":'+str(sta_shell)
+            tbody+= ',"guolupower":'+str(guolupower)
             tbody+= ',"tmp1":'+str(tempeture_1)+'}'
             return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
         
@@ -165,6 +176,10 @@ def return_sta(request):
 
             sta_onoff=1
 
+            if po['d']== 'dy':
+                guolupower=1
+                GPIO.output(io_dy, 0)
+                tbody= '{"a":"dy","b":"on"}'
             if po['d']== 'zq':
                 GPIO.output(io_zq, 0)
                 tbody= '{"a":"zq","b":"on"}'
@@ -177,7 +192,11 @@ def return_sta(request):
                 GPIO.output(io_zq, 1)
                 eTimer1=False
                 tbody= '{"a":"all","b":"off"}'
-            elif po['d']== 'zq':
+            elif po['d']== 'dy':
+                guolupower=0
+                GPIO.output(io_dy, 1)
+                tbody= '{"a":"dy","b":"off"}'
+            elif po['d']== 'dy':
                 GPIO.output(io_zq, 1)
                 tbody= '{"a":"zq","b":"off"}'
             print(tbody)
@@ -255,7 +274,7 @@ wat_name=''
 @asyncio.coroutine
 def setting(request):
     global shell_ud_t1_set,shell_ud_t2u_set,shell_ud_t2d_set,shell_ud_t3_set
-    global ver
+    global ver,sn
     global stapwd,setpwd,softPath,seled_cai,seled_cai_cn
     global cut_name,cai_name,wat_name,seled_cai_cn
     hhdd=[('Access-Control-Allow-Origin','*')]
@@ -278,9 +297,7 @@ def setting(request):
         tbody+= '"t2u":"'+str(shell_ud_t2u_set)+'",'
         tbody+= '"t2d":"'+str(shell_ud_t2d_set)+'",'
         tbody+= '"t3":"'+str(shell_ud_t3_set)+'",'
-        tbody+= '"cut_name":"'+cut_name+'",'
-        tbody+= '"seled_cai_cn":"'+cai_name+'",'
-        tbody+= '"wat_name":"'+wat_name+'",'
+        tbody+= '"sn":"'+str(sn)+'",'
         tbody+= '"stapwd":"'+str(stapwd)+'"}'
         return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
 
@@ -294,6 +311,7 @@ def setting(request):
         kconfig.set("gh","shell_ud_t2u_set",po['t2u'])
         kconfig.set("gh","shell_ud_t2d_set",po['t2d'])
         kconfig.set("gh","shell_ud_t3_set",po['t3'])
+        kconfig.set("gh","sn",po['sn'])
         kconfig.set("gh","stapwd",stapwd)
         kconfig.write(open(softPath+"setting.ini","w"))
         tbody= '{"p":"ok","w":"ok"}'
@@ -352,7 +370,8 @@ def sys_update(request):
 @aiohttp_jinja2.template('upgrade.html')
 def upgrade(request):
     #使用aiohttp_jinja2  methed 2
-    return {'html': 'upgrade'}
+    global sn
+    return {'html': 'upgrade','sn': sn}
 
 
 import serial
