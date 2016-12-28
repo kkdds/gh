@@ -12,7 +12,7 @@ from aiohttp import web
 ttim=0
 t=object
 
-ver='20161224'
+ver='20161228'
 stapwd='abc'
 setpwd='gh2016'
 softPath='/home/pi/gh/'
@@ -79,7 +79,7 @@ GPIO.setup(io_zq, GPIO.OUT)
 GPIO.output(io_dy, 1)
 GPIO.output(io_zq, 1)
 
-io_in1=2
+io_in1=12
 GPIO.setup(io_in1,GPIO.IN,pull_up_down=GPIO.PUD_UP)
 
 moto_1_p=13 #脉宽输出
@@ -306,6 +306,7 @@ def setting(request):
         shell_ud_t2u_set=int(po['t2u'])
         shell_ud_t2d_set=int(po['t2d'])
         shell_ud_t3_set=int(po['t3'])
+        sn=po['sn']
         stapwd=po['stapwd']
         kconfig.set("gh","shell_ud_t1_set",po['t1'])
         kconfig.set("gh","shell_ud_t2u_set",po['t2u'])
