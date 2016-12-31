@@ -179,9 +179,24 @@ def return_sta(request):
             #print('shall stop at '+str(eIntval1))
             tbody= '{"addtime":'+str(eIntval1-int(time.time()))+'}'
             return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
+        
+        elif po['m'] == 'settemp':
+            if po['ttmp']== '90':
+                ttmp=b'\x02\x06\x10\x01\x03\x84\xDC\x6A'
+            if po['ttmp']== '110':
+                ttmp=b'\x02\x06\x10\x01\x04\x4C\xDF\xCC'
+            if po['ttmp']== '135':
+                ttmp=b'\x02\x06\x10\x01\x05\x46\x5E\x5B'
+            ser = serial.Serial("/dev/ttyUSB0",parity=serial.PARITY_ODD,timeout=1)
+            ser.write(ttmp)
+            recv = ser.read(8)
+            #print(recv)
+            ser.close()
+
+            tbody= '{"settemp":'+po['ttmp']+'}'
+            return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
                 
         elif po['m'] == 'gpioon':
-
             sta_onoff=1
 
             if po['d']== 'dy':
