@@ -354,6 +354,9 @@ def setting(request):
             tbody = tbody+i+';'
         tbody= str(tbody)
 
+    if po['m'] == 'reboot':
+        system('sudo reboot')
+
     return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
 
 
