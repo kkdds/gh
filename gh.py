@@ -12,7 +12,7 @@ from aiohttp import web
 ttim=0
 t=object
 
-ver='20161229'
+ver='20161231'
 stapwd='abc'
 setpwd='gh2016'
 softPath='/home/pi/gh/'
@@ -51,6 +51,18 @@ try:
 except:
     shell_ud_t3_set=5000
     kconfig.set("gh","shell_ud_t3_set",str(shell_ud_t3_set))
+
+try:
+    spdu=kconfig.getint("gh","spdu")
+except:
+    spdu=50
+    kconfig.set("gh","spdu",str(spdu))
+
+try:
+    spdd=kconfig.getint("gh","spdd")
+except:
+    spdd=50
+    kconfig.set("gh","spdd",str(spdd))
 
 try:
     stapwd = kconfig.get("gh","stapwd")
@@ -246,18 +258,18 @@ def tt2():
     print('tt2 '+str(ttim-time.time()))
 
 def tt3():
-    global t,shell_ud_t3_set,shell_up_down,ttim
+    global t,shell_ud_t3_set,shell_up_down,ttim,spdu,spdd
     t = threading.Timer(shell_ud_t3_set/1000, tt4)
     if shell_up_down==0:
-        p.ChangeDutyCycle(20)
+        p.ChangeDutyCycle(spdu)
     else:
-        p.ChangeDutyCycle(20)
+        p.ChangeDutyCycle(spdd)
     t.start()
     print('tt3 '+str(ttim-time.time()))
 
 def tt4():
     global t,ttim
-    t = threading.Timer(6, ttfin)
+    t = threading.Timer(1, ttfin)
     p.ChangeDutyCycle(4)
     t.start()
     print('tt4 '+str(ttim-time.time()))
@@ -276,7 +288,7 @@ wat_name=''
 @asyncio.coroutine
 def setting(request):
     global shell_ud_t1_set,shell_ud_t2u_set,shell_ud_t2d_set,shell_ud_t3_set
-    global ver,sn
+    global ver,sn,spdu,spdd
     global stapwd,setpwd,softPath,seled_cai,seled_cai_cn
     global cut_name,cai_name,wat_name,seled_cai_cn
     hhdd=[('Access-Control-Allow-Origin','*')]
@@ -299,6 +311,8 @@ def setting(request):
         tbody+= '"t2u":"'+str(shell_ud_t2u_set)+'",'
         tbody+= '"t2d":"'+str(shell_ud_t2d_set)+'",'
         tbody+= '"t3":"'+str(shell_ud_t3_set)+'",'
+        tbody+= '"spdu":"'+str(spdu)+'",'
+        tbody+= '"spdd":"'+str(spdd)+'",'
         tbody+= '"sn":"'+str(sn)+'",'
         tbody+= '"stapwd":"'+str(stapwd)+'"}'
         return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
@@ -314,6 +328,8 @@ def setting(request):
         kconfig.set("gh","shell_ud_t2u_set",po['t2u'])
         kconfig.set("gh","shell_ud_t2d_set",po['t2d'])
         kconfig.set("gh","shell_ud_t3_set",po['t3'])
+        kconfig.set("gh","spdu",po['spdu'])
+        kconfig.set("gh","spdd",po['spdd'])
         kconfig.set("gh","sn",po['sn'])
         kconfig.set("gh","stapwd",stapwd)
         kconfig.write(open(softPath+"setting.ini","w"))
