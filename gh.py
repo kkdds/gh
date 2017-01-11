@@ -461,6 +461,7 @@ def loop_info():
                 sta_shell=2
 
         if GPIO.input(io_in1)==GPIO.HIGH:
+            return 1 #20170111 off function
             I_prot+=1
             if I_prot>5:
                 sta_shell=0
