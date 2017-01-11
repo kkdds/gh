@@ -12,9 +12,9 @@ from aiohttp import web
 ttim=0
 t=object
 
-ver='20170102'
+ver='20170111'
 stapwd='abc'
-setpwd='gh2016'
+setpwd='gh2017'
 softPath='/home/pi/gh/'
 
 kconfig=configparser.ConfigParser()
