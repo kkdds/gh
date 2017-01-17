@@ -407,8 +407,8 @@ def sys_update(request):
 @aiohttp_jinja2.template('upgrade.html')
 def upgrade(request):
     #使用aiohttp_jinja2  methed 2
-    global sn
-    return {'html': 'upgrade','sn': sn}
+    global sn,ver
+    return {'html': 'upgrade','sn': sn,'ver': ver}
 
 
 import serial
