@@ -12,7 +12,7 @@ from aiohttp import web
 ttim=0
 t=object
 
-ver='20170111'
+ver='20170120'
 stapwd='abc'
 setpwd='gh2017'
 softPath='/home/pi/gh/'
@@ -142,7 +142,7 @@ class WAM_AP(object):
         while True:
             sleep(5)
     def __init__(self):
-        self._process = pexpect.spawn('sudo create_ap --no-virt -n -g 192.168.2.105 wlan0 '+sn+' 66341703')
+        self._process = pexpect.spawn('sudo create_ap --no-virt -g 192.168.2.105 wlan0 eth0 '+sn+' 66341703')
         self._end_thread = Thread(target=self._get_end)
         self._end_thread.start()
 WAM_AP()
@@ -181,10 +181,10 @@ def return_sta(request):
             return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
         
         elif po['m'] == 'settemp':
-            if po['ttmp']== '90':
+            if po['ttmp']== '98':
                 ttmp=b'\x02\x06\x10\x01\x03\xD4\xDC\x56'
-            if po['ttmp']== '110':
-                ttmp=b'\x02\x06\x10\x01\x04\x4C\xDF\xCC'
+            if po['ttmp']== '102':
+                ttmp=b'\x02\x06\x10\x01\x03\xFC\xDC\x48'
             if po['ttmp']== '135':
                 ttmp=b'\x02\x06\x10\x01\x05\x46\x5E\x5B'
             ser = serial.Serial("/dev/ttyUSB0",parity=serial.PARITY_ODD,timeout=1)
