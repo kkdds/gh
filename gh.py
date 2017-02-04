@@ -290,7 +290,7 @@ def tt4():
     print('tt4 '+str(ttim-time.time()))
 
 def ttfin():
-    global ttim,shell_up_down,sta_shell,moto_1_r，moto_1_f
+    global ttim,shell_up_down,sta_shell,moto_1_r,moto_1_f
     p.ChangeDutyCycle(0)
     sta_shell=shell_up_down
     GPIO.output(moto_1_r, 1)
