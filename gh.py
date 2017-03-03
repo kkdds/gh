@@ -12,7 +12,7 @@ from aiohttp import web
 ttim=0
 t=object
 
-ver='20170204'
+ver='20170303'
 stapwd='abc'
 setpwd='gh2017'
 softPath='/home/pi/gh/'
@@ -251,7 +251,8 @@ def return_sta(request):
                 sta_shell=1
                 tbody= '{"a":"shell","b":"dw"}'
             elif sta_shell==1:
-                tbody= '{"a":"shell","b":"smil stop"}'
+                ttfin()
+                tbody= '{"a":"shell","b":"stop"}'
             print(tbody)
             ttim=time.time()
             return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
