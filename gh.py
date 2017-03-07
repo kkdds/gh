@@ -12,7 +12,7 @@ from aiohttp import web
 ttim=0
 t=object
 
-ver='20170303'
+ver='20170307'
 stapwd='abc'
 setpwd='gh2017'
 softPath='/home/pi/gh/'
@@ -232,6 +232,7 @@ def return_sta(request):
             return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
                 
         elif po['m'] == 'shell':
+            tbody= '{"a":"shell","b":"noaction"}'
             if po['d']== 'up' and sta_shell!=1:
                 t = threading.Timer(shell_ud_t1_set/1000, tt2)
                 GPIO.output(moto_1_r, 0)
@@ -275,7 +276,7 @@ def tt2():
 
 def tt3():
     global t,shell_ud_t3_set,shell_up_down,ttim,spdu,spdd
-    t = threading.Timer(shell_ud_t3_set/1000, tt4)
+    t = threading.Timer(shell_ud_t3_set/1000, ttfin)
     if shell_up_down==0:
         p.ChangeDutyCycle(spdu)
     else:
@@ -283,17 +284,11 @@ def tt3():
     t.start()
     print('tt3 '+str(ttim-time.time()))
 
-def tt4():
-    global t,ttim
-    t = threading.Timer(1, ttfin)
-    p.ChangeDutyCycle(4)
-    t.start()
-    print('tt4 '+str(ttim-time.time()))
-
 def ttfin():
-    global ttim,shell_up_down,sta_shell,moto_1_r,moto_1_f
+    global t,ttim,sta_shell,moto_1_r,moto_1_f
+    t.cancel()
     p.ChangeDutyCycle(0)
-    sta_shell=shell_up_down
+    sta_shell=0
     GPIO.output(moto_1_r, 1)
     GPIO.output(moto_1_f, 1)
     print('shell run end '+str(ttim-time.time()))
