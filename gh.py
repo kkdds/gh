@@ -12,7 +12,7 @@ from aiohttp import web
 ttim=0
 t=object
 
-ver='20170307'
+ver='20170308'
 stapwd='abc'
 setpwd='gh2017'
 softPath='/home/pi/gh/'
@@ -335,6 +335,8 @@ def setting(request):
         shell_ud_t2u_set=int(po['t2u'])
         shell_ud_t2d_set=int(po['t2d'])
         shell_ud_t3_set=int(po['t3'])
+        spdu=int(po['spdu'])
+        spdd=int(po['spdd'])
         sn=po['sn']
         stapwd=po['stapwd']
         kconfig.set("gh","shell_ud_t1_set",po['t1'])
