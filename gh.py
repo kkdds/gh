@@ -12,7 +12,7 @@ from aiohttp import web
 ttim=0
 t=object
 
-ver='20170308'
+ver='20170309'
 stapwd='abc'
 setpwd='gh2017'
 softPath='/home/pi/gh/'
@@ -285,10 +285,10 @@ def tt3():
     print('tt3 '+str(ttim-time.time()))
 
 def ttfin():
-    global t,ttim,sta_shell,moto_1_r,moto_1_f
+    global t,ttim,sta_shell,shell_up_down,moto_1_r,moto_1_f
     t.cancel()
     p.ChangeDutyCycle(0)
-    sta_shell=0
+    sta_shell=shell_up_down
     GPIO.output(moto_1_r, 1)
     GPIO.output(moto_1_f, 1)
     print('shell run end '+str(ttim-time.time()))
