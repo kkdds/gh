@@ -12,7 +12,7 @@ from aiohttp import web
 ttim=0
 t=object
 
-ver='20170309'
+ver='20170312'
 stapwd='abc'
 setpwd='gh2017'
 softPath='/home/pi/gh/'
@@ -294,16 +294,12 @@ def ttfin():
     print('shell run end '+str(ttim-time.time()))
 
 
-cut_name=''
-cai_name=''
-wat_name=''
 
 @asyncio.coroutine
 def setting(request):
     global shell_ud_t1_set,shell_ud_t2u_set,shell_ud_t2d_set,shell_ud_t3_set
     global ver,sn,spdu,spdd
     global stapwd,setpwd,softPath,seled_cai,seled_cai_cn
-    global cut_name,cai_name,wat_name,seled_cai_cn
     hhdd=[('Access-Control-Allow-Origin','*')]
     tbody= '{"p":"error"}'
 
@@ -313,11 +309,10 @@ def setting(request):
         return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
 
     if po['m'] == 'get':
-        cai_name= ''
-        for i in seled_cai_cn:
-            cai_name = cai_name+i+';'
-        cai_name= str(cai_name)
-
+        try:
+            ip=po['ip']
+        except:
+            ip=''
         tbody = '{"p":"ok",'
         tbody+= '"ver":"'+ver+'",'
         tbody+= '"t1":"'+str(shell_ud_t1_set)+'",'
@@ -326,6 +321,7 @@ def setting(request):
         tbody+= '"t3":"'+str(shell_ud_t3_set)+'",'
         tbody+= '"spdu":"'+str(spdu)+'",'
         tbody+= '"spdd":"'+str(spdd)+'",'
+        tbody+= '"ip":"'+str(ip)+'",'
         tbody+= '"sn":"'+str(sn)+'",'
         tbody+= '"stapwd":"'+str(stapwd)+'"}'
         return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
