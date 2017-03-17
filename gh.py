@@ -12,7 +12,7 @@ from aiohttp import web
 ttim=0
 t=object
 
-ver='20170312'
+ver='20170318'
 stapwd='abc'
 setpwd='gh2017'
 softPath='/home/pi/gh/'
@@ -105,14 +105,15 @@ p = GPIO.PWM(moto_1_p, 1500)
 p.start(0)
 
 
-guolupower=0
 watchdog=0
 eTimer1=False
 eIntval1=5
 sta_shell=0
 sta_onoff=0
 shell_up_down=0
-
+settemp='0'
+sta_zq='0'
+guolupower='0'
 '''
 sta_shell
 0 top stop
@@ -151,7 +152,7 @@ WAM_AP()
 @asyncio.coroutine
 def return_sta(request):
     global eTimer1,eIntval1,sta_onoff,watchdog
-    global shell_up_down,sta_shell,guolupower
+    global shell_up_down,sta_shell,guolupower,settemp,sta_zq
     global stapwd,setpwd,softPath,tempeture_1,tempeture_2,ttim,t
 
     hhdd=[('Access-Control-Allow-Origin','*')]
@@ -168,7 +169,9 @@ def return_sta(request):
         elif po['m'] == 'sta':
             watchdog=0
             tbody= '{"shell_sta":'+str(sta_shell)
-            tbody+= ',"guolupower":'+str(guolupower)
+            tbody+= ',"guolupower":'+guolupower
+            tbody+= ',"settemp":'+settemp
+            tbody+= ',"sta_zq":'+sta_zq
             tbody+= ',"tmp1":'+str(tempeture_1)+'}'
             return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
         
@@ -181,12 +184,16 @@ def return_sta(request):
             return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
         
         elif po['m'] == 'settemp':
+            settemp='0'
             if po['ttmp']== '98':
                 ttmp=b'\x02\x06\x10\x01\x03\xD4\xDC\x56'
+                settemp='98'
             if po['ttmp']== '102':
                 ttmp=b'\x02\x06\x10\x01\x03\xFC\xDC\x48'
+                settemp='102'
             if po['ttmp']== '135':
                 ttmp=b'\x02\x06\x10\x01\x05\x46\x5E\x5B'
+                settemp='135'
             ser = serial.Serial("/dev/ttyUSB0",parity=serial.PARITY_ODD,timeout=1)
             ser.write(ttmp)
             recv = ser.read(8)
@@ -200,10 +207,11 @@ def return_sta(request):
             sta_onoff=1
 
             if po['d']== 'dy':
-                guolupower=1
+                guolupower='1'
                 GPIO.output(io_dy, 0)
                 tbody= '{"a":"dy","b":"on"}'
             if po['d']== 'zq':
+                sta_zq='1'
                 delaytime=po['t']
                 eTimer1=True
                 eIntval1=int(time.time())+int(delaytime)
@@ -218,14 +226,16 @@ def return_sta(request):
         elif po['m'] == 'gpiooff':
             if po['d']== 'all':
                 sta_onoff=0
+                sta_zq='0'
                 GPIO.output(io_zq, 1)
                 eTimer1=False
                 tbody= '{"a":"all","b":"off"}'
             elif po['d']== 'dy':
-                guolupower=0
+                guolupower='0'
                 GPIO.output(io_dy, 1)
                 tbody= '{"a":"dy","b":"off"}'
-            elif po['d']== 'dy':
+            elif po['d']== 'zq':
+                sta_zq='0'
                 GPIO.output(io_zq, 1)
                 tbody= '{"a":"zq","b":"off"}'
             print(tbody)
