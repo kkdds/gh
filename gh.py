@@ -172,6 +172,7 @@ def return_sta(request):
             tbody+= ',"guolupower":'+guolupower
             tbody+= ',"settemp":'+settemp
             tbody+= ',"sta_zq":'+sta_zq
+            tbody+= ',"running_sta":'+po['running_sta']
             tbody+= ',"tmp1":'+str(tempeture_1)+'}'
             return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
         
