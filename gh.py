@@ -154,7 +154,8 @@ WAM_AP()
 def return_sta(request):
     global eTimer1,eIntval1,sta_onoff,watchdog,running_sta
     global shell_up_down,sta_shell,guolupower,settemp,sta_zq
-    global stapwd,setpwd,softPath,tempeture_1,tempeture_2,ttim,t
+    global stapwd,setpwd,softPath,tempeture_1,tempeture_2,ttim,t    
+    global ttfinck
 
     hhdd=[('Access-Control-Allow-Origin','*')]
     po = yield from request.post()
@@ -174,6 +175,7 @@ def return_sta(request):
             tbody+= ',"settemp":'+settemp
             tbody+= ',"sta_zq":'+sta_zq
             tbody+= ',"running_sta":'+running_sta
+            tbody+= ',"ttfinck":'+str(ttfinck)
             tbody+= ',"tmp1":'+str(tempeture_1)+'}'
             return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
         
@@ -282,6 +284,7 @@ def return_sta(request):
 
 
 def tt2():
+    global ttfinck
     global t,shell_ud_t2d_set,shell_ud_t2u_set,shell_up_down,ttim
     if shell_up_down==0:
         shell_t2=shell_ud_t2u_set/1000
@@ -290,17 +293,26 @@ def tt2():
     t = threading.Timer(shell_t2, tt3)
     p.ChangeDutyCycle(100)
     t.start()
+    ttfinck=0
     print('tt2 '+str(ttim-time.time()))
 
 def tt3():
+    global ttfinck
     global t,shell_ud_t3_set,shell_up_down,ttim,spdu,spdd
-    t = threading.Timer(shell_ud_t3_set/1000, ttfin)
     if shell_up_down==0:
         p.ChangeDutyCycle(spdu)
     else:
         p.ChangeDutyCycle(spdd)
+    t = threading.Timer(shell_ud_t3_set/1000, ttfin_before)
     t.start()
+    ttfinck=0
     print('tt3 '+str(ttim-time.time()))
+
+ttfinck=0
+def ttfin_before():
+    global ttfinck
+    ttfinck=1
+    ttfin()
 
 def ttfin():
     global t,ttim,sta_shell,shell_up_down,moto_1_r,moto_1_f
