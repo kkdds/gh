@@ -114,6 +114,7 @@ shell_up_down=0
 settemp='0'
 sta_zq='0'
 guolupower='0'
+running_sta=False
 '''
 sta_shell
 0 top stop
