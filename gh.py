@@ -114,7 +114,7 @@ shell_up_down=0
 settemp='0'
 sta_zq='0'
 guolupower='0'
-running_sta=False
+running_sta='0'
 '''
 sta_shell
 0 top stop
@@ -214,7 +214,7 @@ def return_sta(request):
                 tbody= '{"a":"dy","b":"on"}'
             if po['d']== 'zq':
                 sta_zq='1'
-                running_sta=True
+                running_sta='1'
                 delaytime=po['t']
                 eTimer1=True
                 eIntval1=int(time.time())+int(delaytime)
@@ -232,7 +232,7 @@ def return_sta(request):
                 sta_zq='0'
                 GPIO.output(io_zq, 1)
                 eTimer1=False
-                running_sta=False
+                running_sta='0'
                 tbody= '{"a":"all","b":"off"}'
             elif po['d']== 'dy':
                 guolupower='0'
@@ -240,7 +240,7 @@ def return_sta(request):
                 tbody= '{"a":"dy","b":"off"}'
             elif po['d']== 'zq':
                 sta_zq='0'
-                running_sta=False
+                running_sta='0'
                 GPIO.output(io_zq, 1)
                 tbody= '{"a":"zq","b":"off"}'
             print(tbody)
