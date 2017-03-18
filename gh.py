@@ -190,12 +190,15 @@ def return_sta(request):
             if po['ttmp']== '98':
                 ttmp=b'\x02\x06\x10\x01\x03\xD4\xDC\x56'
                 settemp='98'
+                running_sta='0'
             if po['ttmp']== '102':
                 ttmp=b'\x02\x06\x10\x01\x03\xFC\xDC\x48'
                 settemp='102'
+                running_sta='0'
             if po['ttmp']== '135':
                 ttmp=b'\x02\x06\x10\x01\x05\x46\x5E\x5B'
                 settemp='135'
+                running_sta=po['d']
             ser = serial.Serial("/dev/ttyUSB0",parity=serial.PARITY_ODD,timeout=1)
             ser.write(ttmp)
             recv = ser.read(8)
