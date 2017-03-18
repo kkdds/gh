@@ -151,7 +151,7 @@ WAM_AP()
 
 @asyncio.coroutine
 def return_sta(request):
-    global eTimer1,eIntval1,sta_onoff,watchdog
+    global eTimer1,eIntval1,sta_onoff,watchdog,running_sta
     global shell_up_down,sta_shell,guolupower,settemp,sta_zq
     global stapwd,setpwd,softPath,tempeture_1,tempeture_2,ttim,t
 
@@ -172,7 +172,7 @@ def return_sta(request):
             tbody+= ',"guolupower":'+guolupower
             tbody+= ',"settemp":'+settemp
             tbody+= ',"sta_zq":'+sta_zq
-            tbody+= ',"running_sta":'+po['running_sta']
+            tbody+= ',"running_sta":'+running_sta
             tbody+= ',"tmp1":'+str(tempeture_1)+'}'
             return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
         
@@ -213,6 +213,7 @@ def return_sta(request):
                 tbody= '{"a":"dy","b":"on"}'
             if po['d']== 'zq':
                 sta_zq='1'
+                running_sta=True
                 delaytime=po['t']
                 eTimer1=True
                 eIntval1=int(time.time())+int(delaytime)
@@ -230,6 +231,7 @@ def return_sta(request):
                 sta_zq='0'
                 GPIO.output(io_zq, 1)
                 eTimer1=False
+                running_sta=False
                 tbody= '{"a":"all","b":"off"}'
             elif po['d']== 'dy':
                 guolupower='0'
@@ -237,6 +239,7 @@ def return_sta(request):
                 tbody= '{"a":"dy","b":"off"}'
             elif po['d']== 'zq':
                 sta_zq='0'
+                running_sta=False
                 GPIO.output(io_zq, 1)
                 tbody= '{"a":"zq","b":"off"}'
             print(tbody)
