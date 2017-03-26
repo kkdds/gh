@@ -460,11 +460,15 @@ def get_temp():
                 tt1=0.2
         except:
             tt1=0.1
-            yield from asyncio.sleep(0.5)
             try:
                 ser.close()
+                yield from asyncio.sleep(0.5)
+                try:
+                    ser = serial.Serial("/dev/ttyUSB0",parity=serial.PARITY_ODD,timeout=1)
+                except:
+                    pass
             except:
-                ser = serial.Serial("/dev/ttyUSB0",parity=serial.PARITY_ODD,timeout=1)
+                pass
 
         yield from asyncio.sleep(0.5)
         tempeture_1=tt1
