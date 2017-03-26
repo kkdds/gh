@@ -439,10 +439,6 @@ def upgrade(request):
 
 import serial
 tempeture_1=0
-try:
-    ser = serial.Serial("/dev/ttyUSB0",parity=serial.PARITY_ODD,timeout=1)
-except:
-    print('serial error')
 @asyncio.coroutine
 def get_temp():
     global tempeture_1,ser
@@ -450,36 +446,28 @@ def get_temp():
     while True:
         # 打开串口 发送 获得接收缓冲区字符
         try:
-            ser.reset_output_buffer()
-        except:
-            pass
-        try:
-            ser.reset_input_buffer()
-        except:
-            pass
-        try:
-            ser.write(b'\x02\x03\x10\x00\x00\x04\x40\xFA')
-            recv = ser.read(7)
-            #print(recv)
-            if recv and recv[2]==8:
-                tt1=(recv[3]*255+recv[4])/10
-            else:
-                #print(recv)
-                tt1=0.2
-        except:
-            tt1=0.7
+            ser = serial.Serial("/dev/ttyUSB0",parity=serial.PARITY_ODD,timeout=1)
             try:
-                tt1=0.71
-                ser.close()
-                yield from asyncio.sleep(0.5)
+                ser.write(b'\x02\x03\x10\x00\x00\x04\x40\xFA')
+                recv = ser.read(7)
+                #print(recv)
+                if recv and recv[2]==8:
+                    tt1=(recv[3]*255+recv[4])/10
+                else:
+                    #print(recv)
+                    tt1=0.2
             except:
-                pass
+                tt1=0.3
 
             try:
-                tt1=0.72
-                ser = serial.Serial("/dev/ttyUSB0",parity=serial.PARITY_ODD,timeout=1)
+                ser.close()
             except:
+                tt1=0.4
                 pass
+
+        except:
+            tt1=0.1
+
 
         yield from asyncio.sleep(0.5)
         tempeture_1=tt1
