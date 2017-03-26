@@ -459,14 +459,17 @@ def get_temp():
                 #print(recv)
                 tt1=0.2
         except:
-            tt1=0.1
+            tt1=0.7
             try:
+                tt1=0.71
                 ser.close()
                 yield from asyncio.sleep(0.5)
-                try:
-                    ser = serial.Serial("/dev/ttyUSB0",parity=serial.PARITY_ODD,timeout=1)
-                except:
-                    pass
+            except:
+                pass
+
+            try:
+                tt1=0.72
+                ser = serial.Serial("/dev/ttyUSB0",parity=serial.PARITY_ODD,timeout=1)
             except:
                 pass
 
