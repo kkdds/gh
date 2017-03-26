@@ -12,7 +12,7 @@ from aiohttp import web
 ttim=0
 t=object
 
-ver='20170318'
+ver='20170326'
 stapwd='abc'
 setpwd='gh2017'
 softPath='/home/pi/gh/'
@@ -439,22 +439,27 @@ def upgrade(request):
 
 import serial
 tempeture_1=0
+ser = serial.Serial("/dev/ttyUSB0",parity=serial.PARITY_ODD,timeout=1)
 @asyncio.coroutine
 def get_temp():
-    global tempeture_1
+    global tempeture_1,ser
     tt1=0
     while True:
         # 打开串口 发送 获得接收缓冲区字符
-        ser = serial.Serial("/dev/ttyUSB0",parity=serial.PARITY_ODD,timeout=1)
-        ser.write(b'\x02\x03\x10\x00\x00\x04\x40\xFA')
-        recv = ser.read(7)
-        #print(recv)
-        if recv and recv[2]==8:
-            tt1=(recv[3]*255+recv[4])/10
-        else:
+        try:
+            ser.write(b'\x02\x03\x10\x00\x00\x04\x40\xFA')
+            recv = ser.read(7)
             #print(recv)
-            tt1=0
-        ser.close()
+            if recv and recv[2]==8:
+                tt1=(recv[3]*255+recv[4])/10
+            else:
+                #print(recv)
+                tt1=0.2
+        except:
+            tt1=0.1
+            ser.close()
+            yield from asyncio.sleep(0.5)
+            ser = serial.Serial("/dev/ttyUSB0",parity=serial.PARITY_ODD,timeout=1)
         yield from asyncio.sleep(0.5)
 
         tempeture_1=tt1
