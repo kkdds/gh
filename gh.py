@@ -450,6 +450,14 @@ def get_temp():
     while True:
         # 打开串口 发送 获得接收缓冲区字符
         try:
+            ser.reset_output_buffer()
+        except:
+            pass
+        try:
+            ser.reset_input_buffer()
+        except:
+            pass
+        try:
             ser.write(b'\x02\x03\x10\x00\x00\x04\x40\xFA')
             recv = ser.read(7)
             #print(recv)
