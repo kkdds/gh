@@ -439,7 +439,10 @@ def upgrade(request):
 
 import serial
 tempeture_1=0
-ser = serial.Serial("/dev/ttyUSB0",parity=serial.PARITY_ODD,timeout=1)
+try:
+    ser = serial.Serial("/dev/ttyUSB0",parity=serial.PARITY_ODD,timeout=1)
+except:
+    print('serial error')
 @asyncio.coroutine
 def get_temp():
     global tempeture_1,ser
@@ -457,13 +460,15 @@ def get_temp():
                 tt1=0.2
         except:
             tt1=0.1
-            ser.close()
             yield from asyncio.sleep(0.5)
-            ser = serial.Serial("/dev/ttyUSB0",parity=serial.PARITY_ODD,timeout=1)
-        yield from asyncio.sleep(0.5)
+            try:
+                ser.close()
+            except:
+                ser = serial.Serial("/dev/ttyUSB0",parity=serial.PARITY_ODD,timeout=1)
 
+        yield from asyncio.sleep(0.5)
         tempeture_1=tt1
-        #print(tempeture_1)
+        print(tempeture_1)
 
 
 @asyncio.coroutine
