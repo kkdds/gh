@@ -12,7 +12,7 @@ from aiohttp import web
 ttim=0
 t=object
 
-ver='20170326'
+ver='20170328'
 stapwd='abc'
 setpwd='gh2017'
 softPath='/home/pi/gh/'
@@ -189,17 +189,17 @@ def return_sta(request):
         
         elif po['m'] == 'settemp':
             settemp='0'
-            if po['ttmp']== '98':
+            if po['ttmp']== 'xh':
                 ttmp=b'\x02\x06\x10\x01\x03\xD4\xDC\x56'
                 settemp='98'
                 running_sta='0'
-            if po['ttmp']== '102':
-                ttmp=b'\x02\x06\x10\x01\x03\xFC\xDC\x48'
-                settemp='102'
+            if po['ttmp']== 'zh':
+                ttmp=b'\x02\x06\x10\x01\x04\x24\xDE\x22'
+                settemp='106'
                 running_sta='0'
-            if po['ttmp']== '135':
-                ttmp=b'\x02\x06\x10\x01\x05\x46\x5E\x5B'
-                settemp='135'
+            if po['ttmp']== 'dh':
+                ttmp=b'\x02\x06\x10\x01\x05\x14\xDF\xA6'
+                settemp='130'
                 running_sta=po['d']
             ser = serial.Serial("/dev/ttyUSB0",parity=serial.PARITY_ODD,timeout=1)
             ser.write(ttmp)
