@@ -195,7 +195,7 @@ def return_sta(request):
                 running_sta='0'
             if po['ttmp']== 'zh':
                 ttmp=b'\x02\x06\x10\x01\x04\x7E\x5E\x19'
-                settemp='106'115
+                settemp='115'
                 running_sta='0'
             if po['ttmp']== 'dh':
                 ttmp=b'\x02\x06\x10\x01\x05\x14\xDF\xA6'
