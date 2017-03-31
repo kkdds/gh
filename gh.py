@@ -12,7 +12,7 @@ from aiohttp import web
 ttim=0
 t=object
 
-ver='20170329'
+ver='20170331'
 stapwd='abc'
 setpwd='gh2017'
 softPath='/home/pi/gh/'
@@ -194,8 +194,8 @@ def return_sta(request):
                 settemp='98'
                 running_sta='0'
             if po['ttmp']== 'zh':
-                ttmp=b'\x02\x06\x10\x01\x04\x7E\x5E\x19'
-                settemp='115'
+                ttmp=b'\x02\x06\x10\x01\x04\x60\xDE\x11'
+                settemp='112'
                 running_sta='0'
             if po['ttmp']== 'dh':
                 ttmp=b'\x02\x06\x10\x01\x05\x14\xDF\xA6'
