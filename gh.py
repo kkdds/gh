@@ -12,7 +12,7 @@ from aiohttp import web
 ttim=0
 t=object
 
-ver='20170331'
+ver='20170403'
 stapwd='abc'
 setpwd='gh2017'
 softPath='/home/pi/gh/'
@@ -90,11 +90,11 @@ GPIO.setup(io_dy, GPIO.OUT)
 GPIO.setup(io_zq, GPIO.OUT)
 GPIO.output(io_dy, 1)
 GPIO.output(io_zq, 1)
-
+'''
 io_in1=12
 GPIO.setup(io_in1,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
 I_prot=0
-
+'''
 moto_1_p=13 #脉宽输出
 moto_1_f=19 #正转
 moto_1_r=26 #反转
@@ -115,6 +115,7 @@ settemp='0'
 sta_zq='0'
 guolupower='0'
 running_sta='0'
+timediff=0
 '''
 sta_shell
 0 top stop
@@ -153,8 +154,8 @@ WAM_AP()
 @asyncio.coroutine
 def return_sta(request):
     global eTimer1,eIntval1,sta_onoff,watchdog,running_sta
-    global shell_up_down,sta_shell,guolupower,settemp,sta_zq
-    global stapwd,setpwd,softPath,tempeture_1,tempeture_2,ttim,t    
+    global shell_up_down,sta_shell,guolupower,settemp,timediff
+    global stapwd,setpwd,softPath,tempeture_1,tempeture_2,ttim,t
     global ttfinck
 
     hhdd=[('Access-Control-Allow-Origin','*')]
@@ -173,7 +174,7 @@ def return_sta(request):
             tbody= '{"shell_sta":'+str(sta_shell)
             tbody+= ',"guolupower":'+guolupower
             tbody+= ',"settemp":'+settemp
-            tbody+= ',"sta_zq":'+sta_zq
+            tbody+= ',"timediff":'+timediff
             tbody+= ',"running_sta":'+running_sta
             tbody+= ',"ttfinck":'+str(ttfinck)
             tbody+= ',"tmp1":'+str(tempeture_1)+'}'
@@ -189,18 +190,16 @@ def return_sta(request):
         
         elif po['m'] == 'settemp':
             settemp='0'
+            running_sta=po['d']
             if po['ttmp']== 'xh':
                 ttmp=b'\x02\x06\x10\x01\x03\xD4\xDC\x56'
-                settemp='98'
-                running_sta='0'
+                settemp='98'                
             if po['ttmp']== 'zh':
                 ttmp=b'\x02\x06\x10\x01\x04\x60\xDE\x11'
                 settemp='112'
-                running_sta='0'
             if po['ttmp']== 'dh':
                 ttmp=b'\x02\x06\x10\x01\x05\x14\xDF\xA6'
                 settemp='130'
-                running_sta=po['d']
             ser = serial.Serial("/dev/ttyUSB0",parity=serial.PARITY_ODD,timeout=1)
             ser.write(ttmp)
             recv = ser.read(8)
@@ -468,7 +467,6 @@ def get_temp():
         except:
             tt1=0.1
 
-
         yield from asyncio.sleep(0.5)
         tempeture_1=tt1
         print(tempeture_1)
@@ -478,7 +476,8 @@ def get_temp():
 def loop_info():
     global eTimer1,eIntval1,sta_shell,sta_onoff
     global watchdog,ttim
-    global t,p,I_prot
+    global t,p,timediff
+    #global I_prot
     while True:
         yield from asyncio.sleep(0.05)
         watchdog+=1
@@ -490,7 +489,8 @@ def loop_info():
 
         if eTimer1==True:
             #sta_shell=1
-            if int(time.time())>=int(eIntval1):
+            timediff=int(time.time())-int(eIntval1)
+            if timediff>=0:
                 sta_onoff=0
                 sta_shell=2
                 GPIO.output(io_zq, 1)
@@ -498,7 +498,7 @@ def loop_info():
                 eTimer1=False
                 sta_onoff=0
                 sta_shell=2
-
+        '''
         if GPIO.input(io_in1)==GPIO.HIGH:
             return 1 #20170111 off function
             I_prot+=1
@@ -522,6 +522,7 @@ def loop_info():
                 print('shell over load protect')
         else:
             I_prot=0
+        '''
     return 1
 
 
