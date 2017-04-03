@@ -491,6 +491,7 @@ def loop_info():
             #sta_shell=1
             timediff=int(time.time())-int(eIntval1)
             if timediff>=0:
+                timediff=0
                 sta_onoff=0
                 sta_shell=2
                 GPIO.output(io_zq, 1)
