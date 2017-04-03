@@ -251,7 +251,11 @@ def return_sta(request):
                 
         elif po['m'] == 'shell':
             tbody= '{"a":"shell","b":"noaction"}'
-            if po['d']== 'up' and sta_shell!=1:
+            if po['d']== 'up':
+                try:
+                    t.cancel()
+                except:
+                    pass
                 t = threading.Timer(shell_ud_t1_set/1000, tt2)
                 GPIO.output(moto_1_r, 0)
                 GPIO.output(moto_1_f, 1)
@@ -260,7 +264,11 @@ def return_sta(request):
                 shell_up_down=0
                 sta_shell=1
                 tbody= '{"a":"shell","b":"up"}'
-            elif po['d']== 'dw' and sta_shell!=1:
+            elif po['d']== 'dw':
+                try:
+                    t.cancel()
+                except:
+                    pass
                 t = threading.Timer(shell_ud_t1_set/1000, tt2)
                 GPIO.output(moto_1_r, 1)
                 GPIO.output(moto_1_f, 0)
