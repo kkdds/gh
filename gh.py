@@ -151,6 +151,7 @@ class WAM_AP(object):
 WAM_AP()
 
 
+
 @asyncio.coroutine
 def return_sta(request):
     global eTimer1,eIntval1,sta_onoff,watchdog,running_sta
