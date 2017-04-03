@@ -224,7 +224,6 @@ def return_sta(request):
                 eIntval1=int(time.time())+int(delaytime)
                 ttim=time.time()
                 print('eTimer1 start')
-
                 GPIO.output(io_zq, 0)
                 tbody= '{"a":"zq","b":"on"}'
             print(tbody)
@@ -474,7 +473,7 @@ def get_temp():
 
 @asyncio.coroutine
 def loop_info():
-    global eTimer1,eIntval1,sta_shell,sta_onoff
+    global eTimer1,eIntval1,sta_shell,sta_onoff,running_sta
     global watchdog,ttim
     global t,p,timediff
     #global I_prot
@@ -494,11 +493,10 @@ def loop_info():
                 timediff=0
                 sta_onoff=0
                 sta_shell=2
+                running_sta='0'
                 GPIO.output(io_zq, 1)
                 print('eTimer1 end '+str(time.time()-ttim))
                 eTimer1=False
-                sta_onoff=0
-                sta_shell=2
         '''
         if GPIO.input(io_in1)==GPIO.HIGH:
             return 1 #20170111 off function
