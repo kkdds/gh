@@ -193,7 +193,7 @@ def return_sta(request):
             running_sta=po['d']
             if po['ttmp']== 'xh':
                 ttmp=b'\x02\x06\x10\x01\x03\xD4\xDC\x56'
-                settemp='98'                
+                settemp='98'
             if po['ttmp']== 'zh':
                 ttmp=b'\x02\x06\x10\x01\x04\x60\xDE\x11'
                 settemp='112'
@@ -206,7 +206,7 @@ def return_sta(request):
             #print(recv)
             ser.close()
 
-            tbody= '{"settemp":'+po['ttmp']+'}'
+            tbody= '{"settemp":"'+po['ttmp']+'"}'
             return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
                 
         elif po['m'] == 'gpioon':
@@ -469,7 +469,7 @@ def get_temp():
 
         yield from asyncio.sleep(0.5)
         tempeture_1=tt1
-        print(tempeture_1)
+        #print(tempeture_1)
 
 
 @asyncio.coroutine
