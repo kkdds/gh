@@ -492,7 +492,7 @@ def loop_info():
             watchdog=0;
             sta_onoff=0
             print('watchdog')
-            GPIO.output(io_zq, 1)
+            #GPIO.output(io_zq, 1)
 
         if eTimer1==True:
             #sta_shell=1
