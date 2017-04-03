@@ -151,7 +151,6 @@ class WAM_AP(object):
 WAM_AP()
 
 
-
 @asyncio.coroutine
 def return_sta(request):
     global eTimer1,eIntval1,sta_onoff,watchdog,running_sta
@@ -175,7 +174,7 @@ def return_sta(request):
             tbody= '{"shell_sta":'+str(sta_shell)
             tbody+= ',"guolupower":'+guolupower
             tbody+= ',"settemp":'+settemp
-            tbody+= ',"timediff":'+timediff
+            tbody+= ',"timediff":'+str(timediff)
             tbody+= ',"running_sta":'+running_sta
             tbody+= ',"ttfinck":'+str(ttfinck)
             tbody+= ',"tmp1":'+str(tempeture_1)+'}'
