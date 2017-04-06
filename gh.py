@@ -12,7 +12,7 @@ from aiohttp import web
 ttim=0
 t=object
 
-ver='20170403'
+ver='20170406'
 stapwd='abc'
 setpwd='gh2017'
 softPath='/home/pi/gh/'
@@ -109,10 +109,9 @@ watchdog=0
 eTimer1=False
 eIntval1=5
 sta_shell=0
-sta_onoff=0
+self_ctrl=0
 shell_up_down=0
 settemp='0'
-sta_zq='0'
 guolupower='0'
 running_sta='0'
 timediff=0
@@ -153,7 +152,7 @@ WAM_AP()
 
 @asyncio.coroutine
 def return_sta(request):
-    global eTimer1,eIntval1,sta_onoff,watchdog,running_sta
+    global eTimer1,eIntval1,self_ctrl,watchdog,running_sta
     global shell_up_down,sta_shell,guolupower,settemp,timediff
     global stapwd,setpwd,softPath,tempeture_1,tempeture_2,ttim,t
     global ttfinck
@@ -165,12 +164,13 @@ def return_sta(request):
         
         if po['m'] == 'login':
             sta_shell=0
-            sta_onoff=0
+            self_ctrl=0
             tbody= '{"p":"ok"}'
             return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
         
         elif po['m'] == 'sta':
             watchdog=0
+            self_ctrl=0
             tbody= '{"shell_sta":'+str(sta_shell)
             tbody+= ',"guolupower":'+guolupower
             tbody+= ',"settemp":'+settemp
@@ -210,14 +210,11 @@ def return_sta(request):
             return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
                 
         elif po['m'] == 'gpioon':
-            sta_onoff=1
-
             if po['d']== 'dy':
                 guolupower='1'
                 GPIO.output(io_dy, 0)
                 tbody= '{"a":"dy","b":"on"}'
             if po['d']== 'zq':
-                sta_zq='1'
                 running_sta='1'
                 delaytime=po['t']
                 eTimer1=True
@@ -231,8 +228,6 @@ def return_sta(request):
                 
         elif po['m'] == 'gpiooff':
             if po['d']== 'all':
-                sta_onoff=0
-                sta_zq='0'
                 GPIO.output(io_zq, 1)
                 eTimer1=False
                 running_sta='0'
@@ -242,7 +237,6 @@ def return_sta(request):
                 GPIO.output(io_dy, 1)
                 tbody= '{"a":"dy","b":"off"}'
             elif po['d']== 'zq':
-                sta_zq='0'
                 running_sta='0'
                 GPIO.output(io_zq, 1)
                 tbody= '{"a":"zq","b":"off"}'
@@ -288,6 +282,19 @@ def return_sta(request):
         tbody= '{"p":"error"}'
         return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
 
+
+def self_tt1():
+    global ttfinck
+    global t,shell_ud_t1_set,shell_up_down,ttim
+    t = threading.Timer(shell_ud_t1_set/1000, tt2)
+    GPIO.output(moto_1_r, 0)
+    GPIO.output(moto_1_f, 1)
+    p.ChangeDutyCycle(100)
+    t.start()
+    ttfinck=0
+    shell_up_down=0
+    sta_shell=1
+    print('self_tt1 '+str(ttim-time.time()))
 
 def tt2():
     global ttfinck
@@ -481,7 +488,7 @@ def get_temp():
 
 @asyncio.coroutine
 def loop_info():
-    global eTimer1,eIntval1,sta_shell,sta_onoff,running_sta
+    global eTimer1,eIntval1,sta_shell,self_ctrl,running_sta
     global watchdog,ttim
     global t,p,timediff
     #global I_prot
@@ -490,7 +497,7 @@ def loop_info():
         watchdog+=1
         if watchdog>100:
             watchdog=0;
-            sta_onoff=0
+            self_ctrl=1
             print('watchdog')
             #GPIO.output(io_zq, 1)
 
@@ -499,37 +506,18 @@ def loop_info():
             timediff=int(time.time())-int(eIntval1)
             if timediff>=0:
                 timediff=0
-                sta_onoff=0
                 sta_shell=2
                 running_sta='0'
                 GPIO.output(io_zq, 1)
                 print('eTimer1 end '+str(time.time()-ttim))
                 eTimer1=False
-        '''
-        if GPIO.input(io_in1)==GPIO.HIGH:
-            return 1 #20170111 off function
-            I_prot+=1
-            if I_prot>5:
-                sta_shell=0
-                print('shell over load')
-                p.ChangeDutyCycle(0)
 
-                try:
-                    if t!=None:
-                        t.cancel()
-                except:
-                        print('t cancel fail')
-
-                t = threading.Timer(5, tt_prot)
-                GPIO.output(moto_1_r, 0)
-                GPIO.output(moto_1_f, 1)
-                p.ChangeDutyCycle(100)
-                t.start()
-                sta_shell=1
-                print('shell over load protect')
-        else:
-            I_prot=0
-        '''
+                if self_ctrl==1:
+                    #to stop, after 3.6s shell up
+                    print('self_tt1')
+                    self_tt1()
+                    #t = threading.Timer(3600,self_tt1)
+                    #t.start()
     return 1
 
 
@@ -541,7 +529,7 @@ def tt_prot():
 
 
 @asyncio.coroutine
-def init(loop):    
+def init(loop):
     global softPath,ver
     app = web.Application(loop=loop)
     #使用aiohttp_jinja2
