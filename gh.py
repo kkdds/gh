@@ -12,7 +12,7 @@ from aiohttp import web
 ttim=0
 t=object
 
-ver='20170406'
+ver='20170418'
 stapwd='abc'
 setpwd='gh2017'
 softPath='/home/pi/gh/'
@@ -166,6 +166,8 @@ def return_sta(request):
             sta_shell=0
             self_ctrl=0
             tbody= '{"p":"ok"}'
+            if po['p'] != stapwd:
+                tbody= '{"p":"error"}'
             return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
         
         elif po['m'] == 'sta':
