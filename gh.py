@@ -11,8 +11,9 @@ import RPi.GPIO as GPIO
 from aiohttp import web
 ttim=0
 t=object
+worktime=0
 
-ver='20170418'
+ver='20170504'
 stapwd='abc'
 setpwd='gh2017'
 softPath='/home/pi/gh/'
@@ -155,7 +156,7 @@ def return_sta(request):
     global eTimer1,eIntval1,self_ctrl,watchdog,running_sta
     global shell_up_down,sta_shell,guolupower,settemp,timediff
     global stapwd,setpwd,softPath,tempeture_1,tempeture_2,ttim,t
-    global ttfinck
+    global ttfinck,worktime
 
     hhdd=[('Access-Control-Allow-Origin','*')]
     po = yield from request.post()
@@ -165,9 +166,12 @@ def return_sta(request):
         if po['m'] == 'login':
             sta_shell=0
             self_ctrl=0
+            worktime=time.time()
             tbody= '{"p":"ok"}'
             if po['p'] != stapwd:
                 tbody= '{"p":"error"}'
+            if po['p'] == '3568':
+                tbody= '{"p":"tcls"}'
             return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
         
         elif po['m'] == 'sta':
@@ -179,6 +183,7 @@ def return_sta(request):
             tbody+= ',"timediff":'+str(timediff)
             tbody+= ',"running_sta":'+running_sta
             tbody+= ',"ttfinck":'+str(ttfinck)
+            tbody+= ',"wt":'+str(int(time.time()-worktime))
             tbody+= ',"tmp1":'+str(tempeture_1)+'}'
             return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
         
