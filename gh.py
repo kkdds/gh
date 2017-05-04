@@ -11,7 +11,7 @@ import RPi.GPIO as GPIO
 from aiohttp import web
 ttim=0
 t=object
-worktime=0
+worktime=time.time()
 
 ver='20170504'
 stapwd='abc'
