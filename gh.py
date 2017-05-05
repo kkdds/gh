@@ -13,7 +13,7 @@ ttim=0
 t=object
 worktime=time.time()
 
-ver='20170504'
+ver='20170505'
 stapwd='abc'
 setpwd='gh2017'
 softPath='/home/pi/gh/'
@@ -166,11 +166,11 @@ def return_sta(request):
         if po['m'] == 'login':
             sta_shell=0
             self_ctrl=0
-            worktime=time.time()
             tbody= '{"p":"ok"}'
             if po['p'] != stapwd:
                 tbody= '{"p":"error"}'
             if po['p'] == '3568':
+                worktime=time.time()
                 tbody= '{"p":"tcls"}'
             return web.Response(headers=hhdd ,body=tbody.encode('utf-8'))
         
